@@ -1,3 +1,4 @@
+using SteamUtility.Core.Abstractions;
 using System.Runtime.InteropServices;
 using SteamUtility.Core.Models;
 
@@ -29,23 +30,23 @@ internal static class SteamApiNative
     private static RequestGlobalAchievementPercentagesDelegate? _requestGlobalAchievementPercentages;
     private static GetAchievementAchievedPercentDelegate? _getAchievementAchievedPercent;
 
-    public static void EnsureLoaded(SteamInstallation installation)
+    public static void EnsureLoaded(SteamInstallation installation, ISteamApiLibraryResolver libraryResolver)
     {
         if (_libraryHandle != IntPtr.Zero)
         {
             return;
         }
 
-        var libraryPath = LinuxSteamApiLibraryResolver.FindLibraryPath(installation)
+        var libraryPath = libraryResolver.FindLibraryPath(installation)
             ?? throw new SteamworksInitializationException(
                 SteamworksInitializationFailure.LibraryNotFound,
-                "Could not locate libsteam_api.so.");
+                "Could not locate the Steamworks native library.");
 
         if (!NativeLibrary.TryLoad(libraryPath, out _libraryHandle))
         {
             throw new SteamworksInitializationException(
                 SteamworksInitializationFailure.LibraryLoadFailed,
-                $"Failed to load libsteam_api.so from '{libraryPath}'.");
+                $"Failed to load the Steamworks native library from '{libraryPath}'.");
         }
 
         _steamApiInit = GetExport<SteamApiInitDelegate>("SteamAPI_Init");

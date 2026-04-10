@@ -1,3 +1,4 @@
+using SteamUtility.Core.Abstractions;
 using SteamUtility.Core.Interop.Wrappers;
 using SteamUtility.Core.Models;
 
@@ -5,6 +6,7 @@ namespace SteamUtility.Core.Services;
 
 public sealed class SteamClientConnection : IDisposable
 {
+    private readonly ISteamClientLibraryLoader _libraryLoader;
     public SteamClient018? SteamClient { get; private set; }
 
     public SteamUtils005? SteamUtils { get; private set; }
@@ -16,6 +18,11 @@ public sealed class SteamClientConnection : IDisposable
     private bool _disposed;
     private int _pipeHandle;
     private int _userHandle;
+
+    public SteamClientConnection(ISteamClientLibraryLoader? libraryLoader = null)
+    {
+        _libraryLoader = libraryLoader ?? SteamPlatformRuntime.Current.ClientLibraryLoader;
+    }
 
     public void Initialize(SteamInstallation installation, long applicationId = 0)
     {
@@ -31,14 +38,14 @@ public sealed class SteamClientConnection : IDisposable
             Environment.SetEnvironmentVariable("SteamAppId", applicationId.ToString());
         }
 
-        if (!LinuxSteamClientLibrary.TryLoad(installation.RootPath))
+        if (!_libraryLoader.TryLoad(installation.RootPath))
         {
             throw new SteamClientInitializeException(
                 SteamClientInitializeFailure.LibraryLoadFailed,
-                "Failed to load steamclient.so from the local Steam installation.");
+                "Failed to load the Steam client library from the local Steam installation.");
         }
 
-        SteamClient = LinuxSteamClientLibrary.CreateInterface<SteamClient018>("SteamClient018");
+        SteamClient = _libraryLoader.CreateInterface<SteamClient018>("SteamClient018");
         _pipeHandle = SteamClient.CreateSteamPipe();
         if (_pipeHandle == 0)
         {

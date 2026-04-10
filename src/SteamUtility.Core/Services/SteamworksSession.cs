@@ -1,3 +1,4 @@
+using SteamUtility.Core.Abstractions;
 using SteamUtility.Core.Models;
 
 namespace SteamUtility.Core.Services;
@@ -7,21 +8,26 @@ public sealed class SteamworksSession : IDisposable
     public static SteamworksSession? Current { get; private set; }
 
     private readonly uint _appId;
+    private readonly ISteamApiLibraryResolver _libraryResolver;
     private readonly string? _previousSteamAppId;
     private readonly string? _previousSteamGameId;
     private readonly SteamAppIdFileState[] _steamAppIdFiles;
     private bool _initialized;
 
-    public SteamworksSession(SteamInstallation installation, uint appId)
+    public SteamworksSession(
+        SteamInstallation installation,
+        uint appId,
+        ISteamApiLibraryResolver? libraryResolver = null)
     {
         _appId = appId;
+        _libraryResolver = libraryResolver ?? SteamPlatformRuntime.Current.ApiLibraryResolver;
         _previousSteamAppId = Environment.GetEnvironmentVariable("SteamAppId");
         _previousSteamGameId = Environment.GetEnvironmentVariable("SteamGameId");
         _steamAppIdFiles = CaptureSteamAppIdFiles();
 
         try
         {
-            SteamApiNative.EnsureLoaded(installation);
+            SteamApiNative.EnsureLoaded(installation, _libraryResolver);
             Environment.SetEnvironmentVariable("SteamAppId", appId.ToString());
             Environment.SetEnvironmentVariable("SteamGameId", appId.ToString());
             WriteSteamAppIdFiles(appId);

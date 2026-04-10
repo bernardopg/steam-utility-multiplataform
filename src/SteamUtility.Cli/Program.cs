@@ -8,7 +8,8 @@ using SteamUtility.Core.Utils;
 const string DefaultOwnershipAppIdsUrl =
     "https://raw.githubusercontent.com/zevnda/steam-game-database/refs/heads/main/games.json";
 
-ISteamLocator locator = new LinuxSteamLocator();
+var platform = SteamPlatformRuntime.Current;
+ISteamLocator locator = platform.Locator;
 var installationService = new SteamInstallationService(locator);
 var installation = installationService.TryResolve();
 var options = CliOptions.Parse(args);
@@ -564,8 +565,8 @@ static void PrintIdle(SteamInstallation? installation, CliOptions options)
             success = "Steam API initialized",
             appId,
             appName,
-            mode = "linux",
-            note = "Linux port does not create the Win32 idle window; it keeps the Steam API session alive until Ctrl+C."
+            mode = SteamPlatformRuntime.Current.Name,
+            note = "This platform keeps the Steam API session alive until Ctrl+C."
         });
 
         while (!cancellation.IsCancellationRequested)
@@ -1340,7 +1341,7 @@ static void PrintUsage()
     Console.WriteLine("  compat-report  Merge apps, compatdata, and config mappings into one report");
     Console.WriteLine("  state-report   Summarize Steam library, compat, and user state files");
     Console.WriteLine("  check_ownership <output_path> [app_ids_json_or_file]");
-    Console.WriteLine("                 Check account ownership through steamclient.so and write games.json");
+    Console.WriteLine("                 Check account ownership through the Steam native client and write games.json");
     Console.WriteLine("  idle <app_id> [app_name]");
     Console.WriteLine("  get_achievement_data <app_id> [storage_dir] [item_id]");
     Console.WriteLine("  unlock_achievement <app_id> <achievement_id>");

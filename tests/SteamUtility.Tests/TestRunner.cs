@@ -17,6 +17,7 @@ public static class TestRunner
             SteamCompatibilityReportServiceTests.Build_WithMissingFiles_ReturnsEmptyReport,
             SteamCompatibilityReportServiceTests.Build_MergesAppCompatDataAndMappings,
             SteamStateReportServiceTests.Build_SummarizesSteamStateFiles,
+            SteamPlatformRuntimeTests.Current_SelectsPlatformSpecificServices,
             LinuxSteamClientLibraryTests.FindLibraryPath_Prefers64BitClient_WhenMultipleCandidatesExist,
             LinuxSteamClientLibraryTests.FindLibraryPath_ReturnsNull_WhenClientLibraryDoesNotExist,
             LinuxSteamApiLibraryResolverTests.FindLibraryPath_PrefersLocalLibraryFromSteamGameFolders,

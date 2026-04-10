@@ -1,7 +1,7 @@
-# Linux Porting Plan
+# Cross-Platform Porting Plan
 
 ## Objective
-Port the current Windows-first Steam Utility architecture to a maintainable Linux-first codebase.
+Port the current Steam Utility architecture to a maintainable cross-platform codebase.
 
 ## Immediate principles
 - Move to modern .NET (`net8.0`)

@@ -1,6 +1,6 @@
 # steam-utility-linux
 
-Linux-first port scaffold for the original Windows-oriented `steam-utility` project.
+Cross-platform port of the original `steam-utility` project with Linux and Windows backends.
 Base project: https://github.com/zevnda/steam-utility
 
 ## Current status
@@ -8,8 +8,8 @@ This repository is already past the bootstrap stage.
 
 Implemented:
 - .NET 8 solution and project structure
-- Cross-platform core library + Linux CLI entrypoint
-- Steam root discovery on common Linux paths
+- Cross-platform core library + CLI entrypoint
+- Steam root discovery on Linux and Windows
 - Minimal Valve VDF parser
 - `libraryfolders.vdf` parsing
 - `appmanifest_*.acf` parsing
@@ -18,27 +18,27 @@ Implemented:
 - Bundled/custom compatibility tool discovery
 - `config/config.vdf` parsing for compatibility tool assignments
 - Per-app compatibility report generation
-- Linux `steamclient.so` loading scaffold
+- Linux and Windows Steam client loading scaffolds
 - Initial ownership lookup through the running Steam client
-- Native Linux `libsteam_api.so` bridge for achievement/stat commands
+- Native Linux and Windows Steamworks bridges for achievement/stat commands
 - CLI filtering and JSON output support
 - Initial test project for parsers/reporting
 - Runtime validation of the state-changing achievement/stat commands
-- Linux replacement for the Win32 hidden-window idle behavior
+- Platform-specific replacement for the Win32 hidden-window idle behavior
 - Broader test coverage
 - CI and release workflow
 - JSON schema/versioning notes for structured outputs
 
 ## Repository structure
-- `src/SteamUtility.Core` — core domain and Linux discovery logic
-- `src/SteamUtility.Cli` — current executable entrypoint
+- `src/SteamUtility.Core` — core domain and platform discovery/runtime logic
+- `src/SteamUtility.Cli` — executable entrypoint
 - `tests/SteamUtility.Tests` — initial unit tests
 - `docs/` — architecture and porting notes
 - `TODO.md` — execution checklist / tracking board
 
 ## Requirements
 - .NET 8 SDK
-- Linux machine with Steam installed
+- Linux or Windows machine with Steam installed
 
 ## Current commands
 ```bash
@@ -110,9 +110,9 @@ dotnet run --project src/SteamUtility.Cli -- state-report --diagnostics
 ## Design direction
 The port is being built in layers:
 1. Filesystem and config discovery
-2. Linux compatibility/runtime mapping
+2. Platform-specific compatibility/runtime mapping
 3. Feature reconstruction behind clean interfaces
-4. Replacement or removal of Windows-only behavior
+4. Replacement or removal of platform-specific behavior
 
 ## Release notes
 - Local release build instructions are in [docs/RELEASE.md](docs/RELEASE.md)

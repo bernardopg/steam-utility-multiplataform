@@ -47,10 +47,16 @@
 - [x] Package binaries/releases
 
 ## Base parity
+- [x] Add a platform selector that chooses Linux or Windows services at runtime
+- [x] Add Windows Steam root discovery
+- [x] Add Windows `steamclient.dll` loading scaffold
+- [x] Add Windows Steamworks native library resolution
+- [x] Add Windows release artifacts to the publishing workflow
+- [x] Update README and release notes for cross-platform support
 
 ## Later
 - [ ] Consider Tauri or other GUI only after core parity is clearer
 
 ## Notes
-- The repository now covers Linux discovery plus the upstream ownership/achievement/stat command surface.
+- The repository now covers Linux and Windows platform selection, Linux discovery, and the upstream ownership/achievement/stat command surface.
 - The remaining work is now strategic follow-up in `Later`, mainly whether the project should ever add a GUI layer.

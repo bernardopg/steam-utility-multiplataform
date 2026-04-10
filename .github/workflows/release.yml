@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
 
     strategy:
@@ -45,8 +45,41 @@ jobs:
           name: SteamUtility-${{ matrix.runtime }}
           path: SteamUtility-${{ matrix.runtime }}.zip
 
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish CLI
+        run: >
+          dotnet publish src/SteamUtility.Cli
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -o artifacts/win-x64
+
+      - name: Pack release archive
+        shell: pwsh
+        run: Compress-Archive -Path artifacts\win-x64\* -DestinationPath SteamUtility-win-x64.zip
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SteamUtility-win-x64
+          path: SteamUtility-win-x64.zip
+
   publish:
-    needs: build
+    needs:
+      - build-linux
+      - build-windows
     runs-on: ubuntu-latest
 
     steps:

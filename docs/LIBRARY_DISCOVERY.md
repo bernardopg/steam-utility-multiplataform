@@ -1,7 +1,7 @@
 # Linux Steam Library Discovery
 
 ## Purpose
-Replace the Windows Registry-based Steam discovery path with a Linux-native filesystem flow.
+Document Steam library discovery across Linux and Windows, with platform-specific implementation notes where the paths differ.
 
 ## Primary discovery flow
 1. Resolve Steam root directory
