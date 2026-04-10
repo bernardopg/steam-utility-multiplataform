@@ -1,40 +1,35 @@
-# Cross-Platform Porting Plan
+# Cross-Platform Status and Roadmap
 
 ## Objective
-Port the current Steam Utility architecture to a maintainable cross-platform codebase.
+Maintain a single, testable CLI codebase that runs on Linux and Windows, while keeping platform-specific behavior isolated behind abstractions.
 
-## Immediate principles
-- Move to modern .NET (`net8.0`)
-- Isolate platform-specific behavior behind interfaces
-- Keep the first milestone CLI-only
-- Avoid direct Win32 assumptions in core logic
-- Treat Steam discovery and native loading as separate concerns
+## Porting status
+The original porting effort is complete for Linux + Windows runtime support.
 
-## Phase 1
-1. Create a cross-platform core library
-2. Implement Linux Steam path discovery
-3. Stand up a Linux CLI bootstrap
-4. Document Windows-specific dependencies that must be replaced
+Delivered:
+1. Migration to .NET 8 with shared core + CLI projects.
+2. Platform runtime selector for Linux and Windows services.
+3. Steam installation/library discovery and app/compat scanning.
+4. Native Steam client loading for ownership and Steamworks command flows.
+5. Cross-platform CI/release packaging for Linux and Windows artifacts.
 
-## Phase 2
-1. Model Steam installation and library folders
-2. Parse Linux Steam configuration and compatibility data
-3. Replace registry-driven discovery with filesystem-driven discovery
-4. Design a native library loading abstraction for Linux shared objects
+## Current architecture principles
+- Keep platform-specific concerns in dedicated service implementations.
+- Keep command behavior consistent between platforms whenever possible.
+- Keep filesystem/config scanning independent from native library loading.
+- Keep JSON discovery/report outputs schema-versioned.
 
-## Phase 3
-1. Decide which features remain cross-platform
-2. Rebuild or drop Win32-only window/message-loop behavior
-3. Introduce tests for path detection and configuration parsing
-4. Reassess whether a GUI layer is needed
+## Remaining roadmap
+1. Improve compatibility-tool/runtime heuristics for edge-case Steam layouts.
+2. Expand integration-style tests around native client initialization failures.
+3. Continue upstream command-behavior alignment where practical.
+4. Reassess GUI layering only after CLI surface remains stable.
 
-## Known architectural blockers from the original project
-- .NET Framework 4.8 targeting
-- Windows registry lookup for Steam installation
-- Win32 window lifecycle calls
-- Explicit `user32.dll` / `kernel32.dll` imports
-- Windows-native Steam client loading assumptions
+## Known scope boundaries
+- Official runtime support currently targets Linux and Windows.
+- Proton/compatdata-centric insights are primarily meaningful on Linux environments.
+- Steamworks mutation commands require a running and logged-in Steam client.
 
-## First success criterion
-`dotnet run --project src/SteamUtility.Cli -- detect`
-should resolve a valid Steam root on a Linux machine with Steam installed.
+## Ongoing success criteria
+- `detect`, `libraries`, `apps`, and `state-report` return coherent results on Linux and Windows hosts with Steam installed.
+- Ownership and Steamworks commands surface clear failure reasons when native initialization cannot be completed.

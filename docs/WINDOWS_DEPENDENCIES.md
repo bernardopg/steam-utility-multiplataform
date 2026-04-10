@@ -1,27 +1,30 @@
-# Windows-Specific Dependencies To Replace
+# Windows Platform Dependencies (Current State)
 
-## Native UI and process model
-The original project uses Win32 constructs that do not exist on Linux:
-- `CreateWindowEx`
-- `ShowWindow`
-- `DestroyWindow`
-- hidden message-window assumptions
+## Purpose
+Document the Windows-specific integrations that are intentionally present in the current cross-platform architecture.
 
-## Native libraries
-The original code assumes Windows dynamic libraries and Windows loader APIs:
-- `steam_api.dll`
-- `steamclient.dll`
-- `LoadLibraryEx`
-- `SetDllDirectory`
+## Windows-specific components in use
+### Steam installation discovery
+- Registry lookup for Steam root:
+	- `HKEY_LOCAL_MACHINE\Software\Valve\Steam` (`InstallPath`)
+	- `HKEY_LOCAL_MACHINE\Software\WOW6432Node\Valve\Steam` (`InstallPath`)
+	- `HKEY_CURRENT_USER\Software\Valve\Steam` (`SteamPath` / `InstallPath`)
+- Fallback filesystem paths under Program Files and Local AppData.
 
-## Operating system integration
-The original project depends on Windows-specific installation discovery:
-- Windows Registry lookup for Steam root
-- Windows path conventions
-- x86 / .NET Framework desktop packaging assumptions
+### Steam client loading
+- Native loader for `steamclient.dll`.
+- `SetDllDirectory` usage to align DLL search behavior with Steam install layout.
+- `CreateInterface` export binding for native interface wrappers.
 
-## Replacement strategy
-- Use filesystem-based Steam detection on Linux
-- Resolve Linux shared libraries explicitly
-- Move native library loading behind interfaces
-- Keep platform-specific code out of application logic
+### Steamworks library resolution
+- Candidate resolution for `steam_api64.dll` and `steam_api.dll` in common game layouts.
+- PE header architecture checks to avoid loading mismatched binaries.
+
+## Isolation strategy
+- Windows-specific behavior is kept behind interfaces (`ISteamLocator`, `ISteamClientLibraryLoader`, `ISteamApiLibraryResolver`).
+- Runtime selection chooses Windows or Linux implementations automatically.
+- Command-level behavior remains shared at the CLI layer.
+
+## Parity expectations
+- Discovery/report commands should behave similarly on Linux and Windows.
+- Proton/compatdata data is generally sparse on native Windows installations and may legitimately return empty sets.

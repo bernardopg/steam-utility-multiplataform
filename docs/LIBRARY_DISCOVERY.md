@@ -1,20 +1,31 @@
-# Linux Steam Library Discovery
+# Steam Library Discovery (Linux + Windows)
 
 ## Purpose
-Document Steam library discovery across Linux and Windows, with platform-specific implementation notes where the paths differ.
+Document how the project discovers Steam installations, library folders, and app manifests across Linux and Windows.
 
-## Primary discovery flow
-1. Resolve Steam root directory
-2. Resolve primary `steamapps` directory
-3. Read `steamapps/libraryfolders.vdf`
-4. Enumerate additional library folders
-5. Later: scan `appmanifest_*.acf` inside each library
+## Discovery flow
+1. Resolve the Steam root directory for the current OS.
+2. Resolve the default `steamapps` path under the root.
+3. Parse `steamapps/libraryfolders.vdf`.
+4. Normalize and validate discovered library folders.
+5. Scan `steamapps/appmanifest_*.acf` in each library.
 
-## Common Linux Steam root candidates
+## Steam root resolution by platform
+### Linux
 - `~/.steam/steam`
 - `~/.local/share/Steam`
 
-## Files of interest
+### Windows
+- Registry candidates:
+	- `HKEY_LOCAL_MACHINE\Software\Valve\Steam` (`InstallPath`)
+	- `HKEY_LOCAL_MACHINE\Software\WOW6432Node\Valve\Steam` (`InstallPath`)
+	- `HKEY_CURRENT_USER\Software\Valve\Steam` (`SteamPath` / `InstallPath`)
+- Fallback directories:
+	- `%ProgramFiles(x86)%\Steam`
+	- `%ProgramFiles%\Steam`
+	- `%LocalAppData%\Steam`
+
+## Files scanned
 - `steamapps/libraryfolders.vdf`
 - `steamapps/appmanifest_*.acf`
 - `config/config.vdf`
@@ -22,17 +33,15 @@ Document Steam library discovery across Linux and Windows, with platform-specifi
 - `userdata/*/config/localconfig.vdf`
 - `userdata/*/config/sharedconfig.vdf`
 
-## Current implementation status
+## Current status
 Implemented:
-- Steam root discovery for common Linux paths
-- Minimal VDF reader for quoted-key Valve files
-- Parsing of `libraryfolders.vdf`
-- Aggregated installation model
-- App manifest parsing
-- Proton / compatibility tool discovery
-- Native Linux Steam API loading
-- Active Steam login user parsing
-- User-specific config scanning for app scopes
+- Linux and Windows root discovery
+- Minimal VDF parser and Valve-keyvalue tree handling
+- `libraryfolders.vdf` parsing and normalization
+- Installed app manifest parsing
+- Compatibility/report scanners that reuse library discovery
+- Active Steam user and per-user config scans
 
-Not implemented yet:
-- Feature parity with the original Windows-only idle behavior
+Notes:
+- Proton-related data (`compatdata`, compatibility tools) is usually Linux-relevant, but command surfaces remain available cross-platform.
+- The project currently targets Linux and Windows; macOS runtime selection is not implemented.

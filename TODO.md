@@ -58,5 +58,5 @@
 - [ ] Consider Tauri or other GUI only after core parity is clearer
 
 ## Notes
-- The repository now covers Linux and Windows platform selection, Linux discovery, and the upstream ownership/achievement/stat command surface.
+- The repository now covers Linux and Windows platform selection/discovery plus the upstream ownership/achievement/stat command surface.
 - The remaining work is now strategic follow-up in `Later`, mainly whether the project should ever add a GUI layer.

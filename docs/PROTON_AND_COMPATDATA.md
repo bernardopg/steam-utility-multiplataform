@@ -1,7 +1,9 @@
 # Proton and CompatData Discovery
 
 ## Purpose
-Map Linux compatibility data that is relevant for Windows game execution through Proton.
+Map Steam compatibility data for Proton-based execution and explain cross-platform command behavior.
+
+This domain is primarily Linux-focused, but the command surface is still available on Windows.
 
 ## What is scanned
 ### Compatibility tools
@@ -14,7 +16,9 @@ Map Linux compatibility data that is relevant for Windows game execution through
 - `config/config.vdf` for explicit compatibility assignments
 
 ## Why this matters
-This is the Linux-side replacement for assumptions that a Windows-native runtime environment exists automatically.
+On Linux, this explains which compatibility runtime a title is expected to use and where its prefix data lives.
+
+On Windows, these locations often do not exist and empty results are expected.
 
 ## Assignment precedence
 - Explicit `config/config.vdf` mappings win over inferred tool guesses.
@@ -28,8 +32,8 @@ Implemented:
 - Discovery of `compatdata` entries by AppID
 - Parsing of explicit compatibility-tool mappings from Steam config
 - Resolved tool details in the compatibility report
-- Exposure path ready for CLI commands
+- CLI support via `compatdata`, `compat-tools`, `compat-mapping`, and `compat-report`
 
 Not implemented yet:
-- Inspect prefixes in detail
-- Launch or emulate original Windows-only features
+- Deep inspection of prefix internals beyond path-level discovery
+- Runtime launch orchestration/emulation behavior

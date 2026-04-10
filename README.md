@@ -4,41 +4,40 @@ Cross-platform port of the original `steam-utility` project with Linux and Windo
 Base project: https://github.com/zevnda/steam-utility
 
 ## Current status
-This repository is already past the bootstrap stage.
+The project is functional on Linux and Windows.
 
 Implemented:
 - .NET 8 solution and project structure
-- Cross-platform core library + CLI entrypoint
+- Cross-platform core library and CLI entrypoint
+- Runtime platform selection (Linux or Windows services)
 - Steam root discovery on Linux and Windows
 - Minimal Valve VDF parser
 - `libraryfolders.vdf` parsing
 - `appmanifest_*.acf` parsing
-- Installed app discovery
-- `compatdata` discovery
+- Installed app discovery across library folders
+- `compatdata` discovery (when present)
 - Bundled/custom compatibility tool discovery
 - `config/config.vdf` parsing for compatibility tool assignments
 - Per-app compatibility report generation
-- Linux and Windows Steam client loading scaffolds
-- Initial ownership lookup through the running Steam client
-- Native Linux and Windows Steamworks bridges for achievement/stat commands
-- CLI filtering and JSON output support
-- Initial test project for parsers/reporting
-- Runtime validation of the state-changing achievement/stat commands
-- Platform-specific replacement for the Win32 hidden-window idle behavior
-- Broader test coverage
-- CI and release workflow
+- Linux and Windows Steam client loading
+- Ownership lookup through the running Steam client
+- Steamworks achievement/stat read and mutation commands
+- CLI filtering, diagnostics, and JSON output
+- Automated tests for parsers/scanners/reporting/runtime
+- CI and release workflow with Linux and Windows artifacts
 - JSON schema/versioning notes for structured outputs
 
 ## Repository structure
 - `src/SteamUtility.Core` — core domain and platform discovery/runtime logic
 - `src/SteamUtility.Cli` — executable entrypoint
-- `tests/SteamUtility.Tests` — initial unit tests
-- `docs/` — architecture and porting notes
+- `tests/SteamUtility.Tests` — automated tests
+- `docs/` — architecture, platform behavior, and release notes
 - `TODO.md` — execution checklist / tracking board
 
 ## Requirements
 - .NET 8 SDK
 - Linux or Windows machine with Steam installed
+- Steam running and logged in for ownership and Steamworks mutation commands
 
 ## Current commands
 ```bash
@@ -72,9 +71,14 @@ dotnet run --project src/SteamUtility.Cli -- check_ownership /tmp/games.json "[7
 # read achievement/stat data and cache it locally
 dotnet run --project src/SteamUtility.Cli -- get_achievement_data 440 /tmp/steam-utility-cache
 
-# legacy achievement/stat commands from the upstream CLI
+# mutate achievements/stats
 dotnet run --project src/SteamUtility.Cli -- unlock_achievement 440 ACH_ID
+dotnet run --project src/SteamUtility.Cli -- lock_achievement 440 ACH_ID
+dotnet run --project src/SteamUtility.Cli -- toggle_achievement 440 ACH_ID
+dotnet run --project src/SteamUtility.Cli -- unlock_all_achievements 440
+dotnet run --project src/SteamUtility.Cli -- lock_all_achievements 440
 dotnet run --project src/SteamUtility.Cli -- update_stats 440 "[{\"name\":\"STAT\",\"value\":100}]"
+dotnet run --project src/SteamUtility.Cli -- reset_all_stats 440
 
 # examples with filters / JSON
 dotnet run --project src/SteamUtility.Cli -- apps --match proton
@@ -90,29 +94,49 @@ dotnet run --project src/SteamUtility.Cli -- state-report --diagnostics
 - `--diagnostics` — emit additional diagnostic logging to stderr
 - `--app-id <id>` — filter by a specific AppID where applicable
 - `--match <text>` — case-insensitive name/text filter where applicable
+- `--help` / `-h` — show command help
+
+## Command aliases
+The CLI accepts underscore and hyphen forms for selected commands:
+- `check_ownership` / `check-ownership`
+- `get_achievement_data` / `get-achievement-data`
+- `unlock_achievement` / `unlock-achievement`
+- `lock_achievement` / `lock-achievement`
+- `toggle_achievement` / `toggle-achievement`
+- `unlock_all_achievements` / `unlock-all-achievements`
+- `lock_all_achievements` / `lock-all-achievements`
+- `update_stats` / `update-stats`
+- `reset_all_stats` / `reset-all-stats`
 
 ## What the project can answer right now
-- Where Steam is installed on Linux
+- Where Steam is installed on Linux or Windows
 - Which library folders exist
 - Which apps appear installed from manifests
-- Which apps have compatdata prefixes
-- Which Proton/runtime folders appear available
+- Which apps have compatdata prefixes (mainly relevant on Linux/Proton setups)
+- Which Proton/runtime folders appear available (mainly relevant on Linux/Proton setups)
 - Which apps have explicit compatibility-tool assignments in `config/config.vdf`
 - Which Steam accounts are present in `config/loginusers.vdf`
 - Which user-specific app scopes exist under `userdata/*/config`
 - Which queried AppIDs are owned by the logged-in Steam account when the native client is running
 - Achievement/stat data and mutations for apps that expose Steam user stats
 
+## Platform notes
+- Runtime services are selected automatically by OS.
+- Linux discovery uses common Steam roots (`~/.steam/steam`, `~/.local/share/Steam`) and Linux native libraries.
+- Windows discovery uses registry and fallback installation paths, then resolves Windows native libraries.
+- Proton/compatdata commands remain available on both platforms, but they usually return meaningful data only on Linux environments using Proton.
+
 ## Output contracts
 - JSON outputs that back the discovery/report commands carry `schemaVersion = 1`
 - Versioning notes live in [docs/JSON_OUTPUTS.md](docs/JSON_OUTPUTS.md)
 
-## Design direction
-The port is being built in layers:
-1. Filesystem and config discovery
-2. Platform-specific compatibility/runtime mapping
-3. Feature reconstruction behind clean interfaces
-4. Replacement or removal of platform-specific behavior
+## Documentation index
+- [docs/LIBRARY_DISCOVERY.md](docs/LIBRARY_DISCOVERY.md)
+- [docs/PROTON_AND_COMPATDATA.md](docs/PROTON_AND_COMPATDATA.md)
+- [docs/WINDOWS_DEPENDENCIES.md](docs/WINDOWS_DEPENDENCIES.md)
+- [docs/PORTING_PLAN.md](docs/PORTING_PLAN.md)
+- [docs/JSON_OUTPUTS.md](docs/JSON_OUTPUTS.md)
+- [docs/RELEASE.md](docs/RELEASE.md)
 
 ## Release notes
 - Local release build instructions are in [docs/RELEASE.md](docs/RELEASE.md)

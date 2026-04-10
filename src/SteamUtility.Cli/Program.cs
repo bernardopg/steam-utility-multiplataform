@@ -470,7 +470,7 @@ static void PrintCheckOwnership(SteamInstallation? installation, CliOptions opti
             ownedCount: 0,
             outputPath: options.Positionals[0],
             error: "Steam installation not found.",
-            suggestion: "Make sure Steam is installed for the current Linux user.",
+            suggestion: "Make sure Steam is installed for the current user.",
             failureReason: SteamClientInitializeFailure.InstallPathNotFound.ToString());
         return;
     }
@@ -1332,7 +1332,7 @@ static void PrintUsage()
 {
     Console.WriteLine("steam-utility-multiplataform");
     Console.WriteLine("Usage:");
-    Console.WriteLine("  detect         Detect the local Steam installation path on Linux");
+    Console.WriteLine("  detect         Detect the local Steam installation path");
     Console.WriteLine("  libraries      List discovered Steam library folders");
     Console.WriteLine("  apps           List installed Steam apps from appmanifest files");
     Console.WriteLine("  compatdata     List per-app compatdata directories");

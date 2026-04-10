@@ -14,6 +14,13 @@
 - `compat-report` returns `SteamCompatibilityReportEntry` records with `schemaVersion = 1`
 - `state-report` returns `SteamEnvironmentSummary` records with `schemaVersion = 1`
 
+## Non-versioned compatibility outputs
+These commands intentionally keep legacy payload semantics for upstream compatibility and are not part of the schema-versioned report contracts:
+- `check_ownership`
+- `idle`
+- `get_achievement_data`
+- achievement/stat mutation commands (`unlock_*`, `lock_*`, `toggle_*`, `update_stats`, `reset_all_stats`)
+
 ## Diagnostics
 - `--diagnostics` adds extra log lines to stderr for discovery and report commands.
 - Diagnostics are intentionally separate from JSON output so scripts can keep reading stdout.
