@@ -29,14 +29,14 @@
 - [x] Expand automated tests
 - [x] Parse more Steam config/state files beyond compatibility mapping
 - [x] Broaden runtime validation of state-changing achievement/stat commands
+- [x] Add explicit `--help` and `-h` handling in the CLI
+- [x] Restore the optional app name argument for `idle <app_id> [app_name]`
+- [x] Replace the Win32 hidden idle window with a Linux keep-alive loop
+- [x] Align native initialization failures with upstream-style failure reasons
+- [x] Match `get_achievement_data` callback and timeout semantics more closely
+- [x] Align command success and error messages with upstream behavior where practical
 
 ## Base parity
-- [ ] Add explicit `--help` and `-h` handling in the CLI
-- [ ] Restore the optional app name argument for `idle <app_id> [app_name]`
-- [ ] Decide on the Linux replacement for the Win32 hidden idle window behavior
-- [ ] Align native initialization failures with upstream-style failure reasons
-- [ ] Match `get_achievement_data` callback and timeout semantics more closely
-- [ ] Align command success and error messages with upstream behavior where practical
 
 ## Next
 - [ ] Parse active user-specific Steam config where relevant
@@ -49,11 +49,10 @@
 - [ ] Add release build instructions
 
 ## Later
-- [ ] Decide what to do with Win32-only idle/window behavior
 - [ ] Consider Tauri or other GUI only after core parity is clearer
 - [ ] Add CI pipeline
 - [ ] Package binaries/releases
 
 ## Notes
 - The repository now covers Linux discovery plus the upstream ownership/achievement/stat command surface.
-- The riskiest remaining area is behavior coupled to Win32-only idle/window handling and broad runtime validation of mutating commands.
+- The remaining work is now in the `Next` items, mostly deeper discovery/reporting polish and auxiliary diagnostics.

@@ -37,11 +37,15 @@ internal static class SteamApiNative
         }
 
         var libraryPath = LinuxSteamApiLibraryResolver.FindLibraryPath(installation)
-            ?? throw new SteamworksInitializationException("Could not locate libsteam_api.so.");
+            ?? throw new SteamworksInitializationException(
+                SteamworksInitializationFailure.LibraryNotFound,
+                "Could not locate libsteam_api.so.");
 
         if (!NativeLibrary.TryLoad(libraryPath, out _libraryHandle))
         {
-            throw new SteamworksInitializationException($"Failed to load libsteam_api.so from '{libraryPath}'.");
+            throw new SteamworksInitializationException(
+                SteamworksInitializationFailure.LibraryLoadFailed,
+                $"Failed to load libsteam_api.so from '{libraryPath}'.");
         }
 
         _steamApiInit = GetExport<SteamApiInitDelegate>("SteamAPI_Init");
@@ -123,7 +127,9 @@ internal static class SteamApiNative
     {
         if (!NativeLibrary.TryGetExport(_libraryHandle, exportName, out var export))
         {
-            throw new SteamworksInitializationException($"Steam API export '{exportName}' was not found.");
+            throw new SteamworksInitializationException(
+                SteamworksInitializationFailure.ExportNotFound,
+                $"Steam API export '{exportName}' was not found.");
         }
 
         return Marshal.GetDelegateForFunctionPointer<TDelegate>(export);

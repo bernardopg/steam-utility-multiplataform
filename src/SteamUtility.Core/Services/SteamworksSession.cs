@@ -29,6 +29,7 @@ public sealed class SteamworksSession : IDisposable
             if (!SteamApiNative.Init())
             {
                 throw new SteamworksInitializationException(
+                    SteamworksInitializationFailure.ApiInitFailed,
                     "Failed to initialize Steam API. Make sure Steam is running and the selected app id is valid.");
             }
 
@@ -39,7 +40,9 @@ public sealed class SteamworksSession : IDisposable
             if (SteamUser == IntPtr.Zero || SteamUserStats == IntPtr.Zero)
             {
                 SteamApiNative.Shutdown();
-                throw new SteamworksInitializationException("Failed to resolve Steam user or user stats interfaces.");
+                throw new SteamworksInitializationException(
+                    SteamworksInitializationFailure.UserInterfaceResolutionFailed,
+                    "Failed to resolve Steam user or user stats interfaces.");
             }
 
             Current = this;
@@ -62,7 +65,9 @@ public sealed class SteamworksSession : IDisposable
     {
         if (!SteamApiNative.RequestCurrentStats(SteamUserStats))
         {
-            throw new InvalidOperationException("Failed to request current stats from Steam.");
+            throw new SteamworksInitializationException(
+                SteamworksInitializationFailure.CurrentStatsRequestFailed,
+                "Failed to request current stats from Steam.");
         }
 
         RunCallbacksUntil(timeout ?? TimeSpan.FromSeconds(3));
@@ -70,7 +75,13 @@ public sealed class SteamworksSession : IDisposable
 
     public void RequestGlobalAchievementPercentages(TimeSpan? timeout = null)
     {
-        SteamApiNative.RequestGlobalAchievementPercentages(SteamUserStats);
+        if (SteamApiNative.RequestGlobalAchievementPercentages(SteamUserStats) == 0)
+        {
+            throw new SteamworksInitializationException(
+                SteamworksInitializationFailure.GlobalAchievementPercentagesRequestFailed,
+                "Failed to request global achievement percentages from Steam.");
+        }
+
         RunCallbacksUntil(timeout ?? TimeSpan.FromSeconds(3));
     }
 

@@ -1,3 +1,19 @@
 namespace SteamUtility.Core.Services;
 
-public sealed class SteamworksInitializationException(string message) : Exception(message);
+public enum SteamworksInitializationFailure : byte
+{
+    None = 0,
+    LibraryNotFound,
+    LibraryLoadFailed,
+    ExportNotFound,
+    ApiInitFailed,
+    UserInterfaceResolutionFailed,
+    CurrentStatsRequestFailed,
+    GlobalAchievementPercentagesRequestFailed
+}
+
+public sealed class SteamworksInitializationException(SteamworksInitializationFailure failureReason, string message)
+    : Exception(message)
+{
+    public SteamworksInitializationFailure FailureReason { get; } = failureReason;
+}

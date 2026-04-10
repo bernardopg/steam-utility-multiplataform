@@ -13,6 +13,12 @@ var installationService = new SteamInstallationService(locator);
 var installation = installationService.TryResolve();
 var options = CliOptions.Parse(args);
 
+if (HasHelpRequest(args))
+{
+    PrintUsage();
+    return;
+}
+
 if (string.IsNullOrWhiteSpace(options.Command))
 {
     PrintUsage();
@@ -451,6 +457,8 @@ static void PrintIdle(SteamInstallation? installation, CliOptions options)
         return;
     }
 
+    var appName = options.Positionals.ElementAtOrDefault(1) ?? "Idling";
+
     try
     {
         using var session = new SteamworksSession(installation!, appId);
@@ -466,6 +474,7 @@ static void PrintIdle(SteamInstallation? installation, CliOptions options)
         {
             success = "Steam API initialized",
             appId,
+            appName,
             mode = "linux",
             note = "Linux port does not create the Win32 idle window; it keeps the Steam API session alive until Ctrl+C."
         });
@@ -474,6 +483,14 @@ static void PrintIdle(SteamInstallation? installation, CliOptions options)
         {
             session.RunCallbacksUntil(TimeSpan.FromSeconds(1));
         }
+    }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
     }
     catch (Exception ex)
     {
@@ -494,8 +511,8 @@ static void PrintAchievementData(SteamInstallation? installation, CliOptions opt
     try
     {
         using var session = new SteamworksSession(installation!, appId);
-        session.EnsureCurrentUserStatsLoaded();
-        session.RequestGlobalAchievementPercentages();
+        session.EnsureCurrentUserStatsLoaded(TimeSpan.FromSeconds(10));
+        session.RequestGlobalAchievementPercentages(TimeSpan.FromSeconds(10));
 
         var schemaLoader = new StatsSchemaLoader();
         if (!schemaLoader.LoadUserGameStatsSchema(installation!, appId, out var achievements, out var stats))
@@ -595,6 +612,14 @@ static void PrintAchievementData(SteamInstallation? installation, CliOptions opt
         File.WriteAllText(filePath, JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true }));
         WriteLegacyJson(new { success = filePath });
     }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
+    }
     catch (Exception ex)
     {
         WriteLegacyJson(new { error = ex.Message });
@@ -643,6 +668,14 @@ static void PrintToggleSingleAchievement(SteamInstallation? installation, CliOpt
         }
 
         WriteLegacyJson(new { success = shouldUnlock ? "Successfully unlocked achievement" : "Successfully locked achievement" });
+    }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
     }
     catch (Exception ex)
     {
@@ -693,6 +726,14 @@ static void PrintToggleAchievement(SteamInstallation? installation, CliOptions o
 
         WriteLegacyJson(new { success = achieved ? "Successfully locked achievement" : "Successfully unlocked achievement" });
     }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
+    }
     catch (Exception ex)
     {
         WriteLegacyJson(new { error = ex.Message });
@@ -728,7 +769,7 @@ static void PrintToggleAllAchievements(SteamInstallation? installation, CliOptio
                 return;
             }
 
-            WriteLegacyJson(new { success = "Successfully lock all achievements" });
+            WriteLegacyJson(new { success = "Successfully locked all achievements" });
             return;
         }
 
@@ -759,6 +800,14 @@ static void PrintToggleAllAchievements(SteamInstallation? installation, CliOptio
         }
 
         WriteLegacyJson(new { success = "Successfully unlocked all achievements" });
+    }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
     }
     catch (Exception ex)
     {
@@ -828,6 +877,14 @@ static void PrintUpdateStats(SteamInstallation? installation, CliOptions options
 
         WriteLegacyJson(new { success = "Successfully updated all stats" });
     }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
+    }
     catch (Exception ex)
     {
         WriteLegacyJson(new { error = ex.Message });
@@ -861,6 +918,14 @@ static void PrintResetAllStats(SteamInstallation? installation, CliOptions optio
         }
 
         WriteLegacyJson(new { success = "Successfully reset all stats" });
+    }
+    catch (SteamworksInitializationException ex)
+    {
+        WriteLegacyJson(new
+        {
+            error = ex.Message,
+            failureReason = ex.FailureReason.ToString()
+        });
     }
     catch (Exception ex)
     {
@@ -927,6 +992,10 @@ static bool TryGetSteamworksAppId(SteamInstallation? installation, CliOptions op
 
     return true;
 }
+
+static bool HasHelpRequest(string[] args)
+    => args.Any(arg => string.Equals(arg, "--help", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(arg, "-h", StringComparison.OrdinalIgnoreCase));
 
 static string GetAchievementDataPath(ulong steamId, uint appId, string? cacheDirectory)
 {
@@ -1187,6 +1256,7 @@ static void PrintUsage()
     Console.WriteLine("  --json           Emit JSON output");
     Console.WriteLine("  --app-id <id>    Filter by AppID");
     Console.WriteLine("  --match <text>   Case-insensitive text filter");
+    Console.WriteLine("  --help, -h       Show this help text");
 }
 
 static void PrintCheckOwnershipUsage()
