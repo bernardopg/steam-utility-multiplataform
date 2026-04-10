@@ -36,6 +36,14 @@ switch (args[0].ToLowerInvariant())
         PrintCompatibilityTools(installation);
         return;
 
+    case "compat-mapping":
+        PrintCompatibilityMappings(installation);
+        return;
+
+    case "compat-report":
+        PrintCompatibilityReport(installation);
+        return;
+
     default:
         PrintUsage();
         return;
@@ -135,6 +143,59 @@ static void PrintCompatibilityTools(SteamInstallation? installation)
     }
 }
 
+static void PrintCompatibilityMappings(SteamInstallation? installation)
+{
+    if (installation is null)
+    {
+        Console.WriteLine("Steam installation not found.");
+        return;
+    }
+
+    var parser = new SteamConfigCompatibilityParser();
+    var configPath = Path.Combine(installation.RootPath, "config", "config.vdf");
+    var mappings = parser.Parse(configPath);
+
+    if (mappings.Count == 0)
+    {
+        Console.WriteLine("No explicit compatibility mappings were found in config.vdf.");
+        return;
+    }
+
+    Console.WriteLine($"Detected {mappings.Count} explicit compatibility mapping(s):");
+
+    foreach (var mapping in mappings)
+    {
+        Console.WriteLine($"  - AppId {mapping.AppId}: {mapping.ToolName}");
+    }
+}
+
+static void PrintCompatibilityReport(SteamInstallation? installation)
+{
+    if (installation is null)
+    {
+        Console.WriteLine("Steam installation not found.");
+        return;
+    }
+
+    var reportService = new SteamCompatibilityReportService();
+    var report = reportService.Build(installation);
+
+    if (report.Count == 0)
+    {
+        Console.WriteLine("No compatibility report entries could be built.");
+        return;
+    }
+
+    Console.WriteLine($"Compatibility report entries: {report.Count}");
+
+    foreach (var entry in report)
+    {
+        var compatData = entry.HasCompatData ? "yes" : "no";
+        var tool = string.IsNullOrWhiteSpace(entry.AssignedTool) ? "<none>" : entry.AssignedTool;
+        Console.WriteLine($"  - {entry.AppId}: {entry.Name} | compatdata={compatData} | tool={tool}");
+    }
+}
+
 static void PrintUsage()
 {
     Console.WriteLine("steam-utility-linux bootstrap");
@@ -144,4 +205,6 @@ static void PrintUsage()
     Console.WriteLine("  apps           List installed Steam apps from appmanifest files");
     Console.WriteLine("  compatdata     List per-app compatdata directories");
     Console.WriteLine("  compat-tools   List bundled and custom compatibility tools");
+    Console.WriteLine("  compat-mapping List explicit compatibility-tool mappings from config.vdf");
+    Console.WriteLine("  compat-report  Merge apps, compatdata, and config mappings into one report");
 }
