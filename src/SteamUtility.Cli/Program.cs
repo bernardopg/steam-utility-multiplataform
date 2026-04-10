@@ -28,6 +28,14 @@ switch (args[0].ToLowerInvariant())
         PrintApps(installation);
         return;
 
+    case "compatdata":
+        PrintCompatData(installation);
+        return;
+
+    case "compat-tools":
+        PrintCompatibilityTools(installation);
+        return;
+
     default:
         PrintUsage();
         return;
@@ -76,11 +84,64 @@ static void PrintApps(SteamInstallation? installation)
     }
 }
 
+static void PrintCompatData(SteamInstallation? installation)
+{
+    if (installation is null)
+    {
+        Console.WriteLine("Steam installation not found.");
+        return;
+    }
+
+    var scanner = new SteamCompatDataScanner();
+    var entries = scanner.Scan(installation);
+
+    if (entries.Count == 0)
+    {
+        Console.WriteLine("No compatdata entries were found.");
+        return;
+    }
+
+    Console.WriteLine($"Detected {entries.Count} compatdata entr{(entries.Count == 1 ? "y" : "ies")}:");
+
+    foreach (var entry in entries)
+    {
+        Console.WriteLine($"  - AppId {entry.AppId}: {entry.CompatDataPath}");
+    }
+}
+
+static void PrintCompatibilityTools(SteamInstallation? installation)
+{
+    if (installation is null)
+    {
+        Console.WriteLine("Steam installation not found.");
+        return;
+    }
+
+    var scanner = new SteamCompatibilityToolScanner();
+    var tools = scanner.Scan(installation);
+
+    if (tools.Count == 0)
+    {
+        Console.WriteLine("No compatibility tools were found.");
+        return;
+    }
+
+    Console.WriteLine($"Detected {tools.Count} compatibility tool(s):");
+
+    foreach (var tool in tools)
+    {
+        var kind = tool.IsCustom ? "custom" : "bundled";
+        Console.WriteLine($"  - {tool.Name} ({kind}) -> {tool.RootPath}");
+    }
+}
+
 static void PrintUsage()
 {
     Console.WriteLine("steam-utility-linux bootstrap");
     Console.WriteLine("Usage:");
-    Console.WriteLine("  detect      Detect the local Steam installation path on Linux");
-    Console.WriteLine("  libraries   List discovered Steam library folders");
-    Console.WriteLine("  apps        List installed Steam apps from appmanifest files");
+    Console.WriteLine("  detect         Detect the local Steam installation path on Linux");
+    Console.WriteLine("  libraries      List discovered Steam library folders");
+    Console.WriteLine("  apps           List installed Steam apps from appmanifest files");
+    Console.WriteLine("  compatdata     List per-app compatdata directories");
+    Console.WriteLine("  compat-tools   List bundled and custom compatibility tools");
 }
