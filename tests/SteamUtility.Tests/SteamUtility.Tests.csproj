@@ -6,5 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SteamUtility.Core\SteamUtility.Core.csproj" />
+    <ProjectReference Include="..\..\src\SteamUtility.Cli\SteamUtility.Cli.csproj" />
   </ItemGroup>
 </Project>

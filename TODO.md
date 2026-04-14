@@ -54,9 +54,17 @@
 - [x] Add Windows release artifacts to the publishing workflow
 - [x] Update README and release notes for cross-platform support
 
+## Confirmed remaining work for upstream parity confidence
+- [x] Add deterministic CLI parity coverage for generic dispatch/help behavior plus the upstream commands `check_ownership` and `idle`
+- [ ] Add automated CLI parity tests for the remaining upstream commands (`get_achievement_data`, achievement mutations, stat mutations) covering usage text, exit behavior, and legacy JSON payloads on success/failure
+- [ ] Add Linux integration validation for the native Steam paths (`steamclient.so`, `libsteam_api.so`) with a real running Steam session, because current automated tests only cover parsers/scanners/runtime selection and do not prove the Steamworks command path end-to-end
+- [ ] Add Windows-specific automated or documented manual validation for `WindowsSteamLocator`, `WindowsSteamClientLibraryLoader`, and `WindowsSteamApiLibraryResolver`, which currently have no dedicated tests
+- [ ] Add coverage collection/reporting (for example Coverlet + CI artifact/public summary); today the repo has passing tests via `dotnet run --project tests/SteamUtility.Tests`, but no actual coverage report
+- [ ] Add regression tests for the remaining high-risk native services (`SteamworksSession`, `SteamOwnershipService`, `SteamApiNative`, `StatsSchemaLoader`) after the new CLI extraction coverage
+
 ## Later
 - [ ] Consider Tauri or other GUI only after core parity is clearer
 
 ## Notes
-- The repository now covers Linux and Windows platform selection/discovery plus the upstream ownership/achievement/stat command surface.
-- The remaining work is now strategic follow-up in `Later`, mainly whether the project should ever add a GUI layer.
+- The upstream command surface from `zevnda/steam-utility` is present in this repository (`check_ownership`, `idle`, `get_achievement_data`, `unlock_achievement`, `lock_achievement`, `toggle_achievement`, `unlock_all_achievements`, `lock_all_achievements`, `update_stats`, `reset_all_stats`).
+- The main gap is no longer missing commands; it is missing proof that Linux/Windows native Steamworks behavior matches the upstream project in real environments and under automated regression coverage.

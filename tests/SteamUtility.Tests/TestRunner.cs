@@ -6,6 +6,22 @@ public static class TestRunner
     {
         var tests = new Action[]
         {
+            Cli.CliHelpAndDispatchTests.ProgramEntrypoint_ForwardsToSteamUtilityCliRun,
+            Cli.CliHelpAndDispatchTests.Run_WithoutArgs_PrintsUsage,
+            Cli.CliHelpAndDispatchTests.Run_WithHelpFlag_PrintsUsage,
+            Cli.CliHelpAndDispatchTests.Run_WithShortHelpFlag_PrintsUsage,
+            Cli.CliHelpAndDispatchTests.Run_WithUnknownCommand_PrintsUsage,
+            Cli.CliHelpAndDispatchTests.Run_WithCheckOwnershipAlias_PrintsSameUsage,
+            Cli.CheckOwnershipCliTests.Run_WithoutOutputPath_PrintsUsage,
+            Cli.CheckOwnershipCliTests.Run_WithMissingInstallation_ReturnsFailureJson,
+            Cli.CheckOwnershipCliTests.Run_WithInvalidAppIdPayload_ReturnsFailureJson,
+            Cli.CheckOwnershipCliTests.Run_WithFakeOwnedApps_WritesUpstreamCompatibleGamesJson,
+            Cli.CheckOwnershipCliTests.Run_WhenOwnershipServiceFails_ReturnsFailureReason,
+            Cli.IdleCliTests.Run_WithInvalidAppId_ReturnsLegacyJsonError,
+            Cli.IdleCliTests.Run_WithMissingInstallation_ReturnsLegacyJsonError,
+            Cli.IdleCliTests.Run_WithIdleOverride_ReturnsSuccessPayload,
+            Cli.IdleCliTests.Run_WithOptionalAppName_PreservesNameInPayload,
+            Cli.IdleCliTests.Run_WhenSteamworksInitFails_ReturnsFailureReason,
             SteamAppManifestParserTests.Parse_AppManifest_ReturnsExpectedValues,
             SteamLibraryFoldersParserTests.Parse_MultipleLibraryFolders_ReturnsExpectedEntries,
             SteamLibraryScannerTests.ScanInstalledApps_FindsManifestsAcrossLibraries,
