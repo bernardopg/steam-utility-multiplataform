@@ -82,7 +82,7 @@ public static class SteamUtilityCli
 
             case "get_achievement_data":
             case "get-achievement-data":
-                PrintAchievementData(installation, options);
+                PrintAchievementData(installation, options, overrides);
                 return;
 
             case "unlock_achievement":
@@ -615,7 +615,7 @@ public static class SteamUtilityCli
         }
     }
 
-    static void PrintAchievementData(SteamInstallation? installation, CliOptions options)
+    static void PrintAchievementData(SteamInstallation? installation, CliOptions options, CliRuntimeOverrides overrides)
     {
         if (!TryGetSteamworksAppId(installation, options, out var appId))
         {
@@ -627,15 +627,31 @@ public static class SteamUtilityCli
 
         try
         {
-            using var session = new SteamworksSession(installation!, appId);
-            session.EnsureCurrentUserStatsLoaded(TimeSpan.FromSeconds(10));
-            session.RequestGlobalAchievementPercentages(TimeSpan.FromSeconds(10));
+            ulong steamId;
+            List<AchievementData> achievements;
+            List<StatData> stats;
 
-            var schemaLoader = new StatsSchemaLoader();
-            if (!schemaLoader.LoadUserGameStatsSchema(installation!, appId, out var achievements, out var stats))
+            if (overrides.LoadAchievementData is not null)
             {
-                achievements = [];
-                stats = [];
+                var result = overrides.LoadAchievementData(installation!, appId);
+                steamId = result.SteamId;
+                achievements = result.Achievements;
+                stats = result.Stats;
+            }
+            else
+            {
+                using var session = new SteamworksSession(installation!, appId);
+                session.EnsureCurrentUserStatsLoaded(TimeSpan.FromSeconds(10));
+                session.RequestGlobalAchievementPercentages(TimeSpan.FromSeconds(10));
+
+                var schemaLoader = new StatsSchemaLoader();
+                if (!schemaLoader.LoadUserGameStatsSchema(installation!, appId, out achievements, out stats))
+                {
+                    achievements = [];
+                    stats = [];
+                }
+
+                steamId = session.SteamId;
             }
 
             if (!string.IsNullOrWhiteSpace(itemId))
@@ -725,7 +741,7 @@ public static class SteamUtilityCli
                 })
             };
 
-            var filePath = GetAchievementDataPath(session.SteamId, appId, cacheDirectory);
+            var filePath = GetAchievementDataPath(steamId, appId, cacheDirectory);
             File.WriteAllText(filePath, JsonSerializer.Serialize(payload, new JsonSerializerOptions { WriteIndented = true }));
             WriteLegacyJson(new { success = filePath });
         }
@@ -1443,7 +1459,14 @@ public static class SteamUtilityCli
         public Func<SteamInstallation, IReadOnlyList<uint>, IReadOnlyList<SteamOwnedApp>>? GetOwnedApps { get; init; }
 
         public Action<SteamInstallation, uint, string>? RunIdle { get; init; }
+
+        public Func<SteamInstallation, uint, AchievementDataCommandResult>? LoadAchievementData { get; init; }
     }
+
+    public sealed record AchievementDataCommandResult(
+        ulong SteamId,
+        List<AchievementData> Achievements,
+        List<StatData> Stats);
 
     internal sealed record CliOptions(string? Command, bool Json, bool Diagnostics, int? AppId, string? Match, string[] Positionals)
     {

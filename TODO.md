@@ -56,7 +56,8 @@
 
 ## Confirmed remaining work for upstream parity confidence
 - [x] Add deterministic CLI parity coverage for generic dispatch/help behavior plus the upstream commands `check_ownership` and `idle`
-- [ ] Add automated CLI parity tests for the remaining upstream commands (`get_achievement_data`, achievement mutations, stat mutations) covering usage text, exit behavior, and legacy JSON payloads on success/failure
+- [x] Add deterministic CLI parity coverage for `get_achievement_data`, including item lookup, aggregate output file generation, and initialization failures
+- [ ] Add automated CLI parity tests for the remaining upstream commands (achievement mutations and stat mutations) covering usage text, exit behavior, and legacy JSON payloads on success/failure
 - [ ] Add Linux integration validation for the native Steam paths (`steamclient.so`, `libsteam_api.so`) with a real running Steam session, because current automated tests only cover parsers/scanners/runtime selection and do not prove the Steamworks command path end-to-end
 - [ ] Add Windows-specific automated or documented manual validation for `WindowsSteamLocator`, `WindowsSteamClientLibraryLoader`, and `WindowsSteamApiLibraryResolver`, which currently have no dedicated tests
 - [ ] Add coverage collection/reporting (for example Coverlet + CI artifact/public summary); today the repo has passing tests via `dotnet run --project tests/SteamUtility.Tests`, but no actual coverage report
