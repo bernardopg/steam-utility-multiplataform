@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `StatsSchemaLoader` for reading and caching achievement/stat schemas
 - Native COM-style interop wrappers (`NativeWrapper`, `NativeClass`, `Utf8StringHandle`)
 - `SteamworksInitializationException` and `SteamClientInitializeException` aligned with upstream failure semantics
-- JSON output contracts with `schemaVersion = 1` for all structured commands
+- JSON output contracts with `SchemaVersion = 1` for all structured commands in the current JSON serialization
 
 #### CLI (`SteamUtility.Cli`)
 - `detect` — locate the Steam root directory

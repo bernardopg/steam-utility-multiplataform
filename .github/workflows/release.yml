@@ -67,8 +67,11 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Run tests
-        run: dotnet test tests/SteamUtility.Tests -c Release --no-restore --logger "console;verbosity=normal"
+      - name: Build test runner
+        run: dotnet build tests/SteamUtility.Tests -c Release --no-restore
+
+      - name: Run tests (custom runner)
+        run: dotnet run --project tests/SteamUtility.Tests -c Release --no-build --no-restore
 
   build-linux:
     needs: [validate, test]
