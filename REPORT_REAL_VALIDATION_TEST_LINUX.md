@@ -1,10 +1,10 @@
 # Linux Real Steam Validation Report
 
-**Date:** 2026-04-14  
-**Machine:** Linux desktop  
-**Steam account:** `faze_spratty (76561198893709131)`  
-**Steam root:** `/home/bitter/.steam/steam`  
-**Library root:** `/home/bitter/.local/share/Steam`  
+**Date:** 2026-04-14
+**Machine:** Linux desktop
+**Steam account:** `faze_spratty (76561198893709131)`
+**Steam root:** `/home/bitter/.steam/steam`
+**Library root:** `/home/bitter/.local/share/Steam`
 **Validation target:** AppID `70120` — `Hacker Evolution Duality`
 
 ## Scope
@@ -24,16 +24,16 @@ Live validation of the Linux Steam integration, including:
 
 ## Command results
 
-| Command | Result |
-| --- | --- |
-| `dotnet build steam-utility-linux.sln` | Passed |
-| `dotnet run --project src/SteamUtility.Cli -- detect` | Passed, root detected |
-| `dotnet run --project src/SteamUtility.Cli -- detect --json` | Passed, `found: true` |
-| `dotnet run --project src/SteamUtility.Cli -- libraries` | Passed, 1 library found |
-| `dotnet run --project src/SteamUtility.Cli -- apps --json` | Passed, installed apps listed |
-| `dotnet run --project src/SteamUtility.Cli -- state-report --diagnostics` | Passed |
-| `dotnet run --project src/SteamUtility.Cli -- check_ownership /tmp/... "[70120]"` | Passed, owned=1 |
-| `dotnet run --project src/SteamUtility.Cli -- get_achievement_data 70120 /tmp/...` | Passed, cache written |
+| Command                                                                            | Result                        |
+| ---------------------------------------------------------------------------------- | ----------------------------- |
+| `dotnet build steam-utility-linux.sln`                                             | Passed                        |
+| `dotnet run --project src/SteamUtility.Cli -- detect`                              | Passed, root detected         |
+| `dotnet run --project src/SteamUtility.Cli -- detect --json`                       | Passed, `found: true`         |
+| `dotnet run --project src/SteamUtility.Cli -- libraries`                           | Passed, 1 library found       |
+| `dotnet run --project src/SteamUtility.Cli -- apps --json`                         | Passed, installed apps listed |
+| `dotnet run --project src/SteamUtility.Cli -- state-report --diagnostics`          | Passed                        |
+| `dotnet run --project src/SteamUtility.Cli -- check_ownership /tmp/... "[70120]"`  | Passed, owned=1               |
+| `dotnet run --project src/SteamUtility.Cli -- get_achievement_data 70120 /tmp/...` | Passed, cache written         |
 
 ### Discovery details
 - `detect` returned: `Steam installation found at: /home/bitter/.steam/steam`
@@ -67,13 +67,13 @@ Initial state:
 
 All achievement mutations were executed against AppID `70120`.
 
-| Command | Result |
-| --- | --- |
+| Command                                           | Result |
+| ------------------------------------------------- | ------ |
 | `unlock_achievement 70120 ACH_TUTORIAL_COMPLETED` | Passed |
-| `lock_achievement 70120 ACH_TUTORIAL_COMPLETED` | Passed |
+| `lock_achievement 70120 ACH_TUTORIAL_COMPLETED`   | Passed |
 | `toggle_achievement 70120 ACH_TUTORIAL_COMPLETED` | Passed |
-| `unlock_all_achievements 70120` | Passed |
-| `lock_all_achievements 70120` | Passed |
+| `unlock_all_achievements 70120`                   | Passed |
+| `lock_all_achievements 70120`                     | Passed |
 
 Observed verification after each step:
 - After `unlock_achievement`: `achieved: true`
@@ -92,10 +92,10 @@ Observed verification after each step:
 
 ## Stat mutation validation
 
-| Command | Result |
-| --- | --- |
+| Command                                                    | Result |
+| ---------------------------------------------------------- | ------ |
 | `update_stats 70120 [{"name":"hedGamesPlayed","value":1}]` | Passed |
-| `reset_all_stats 70120` | Passed |
+| `reset_all_stats 70120`                                    | Passed |
 
 Observed verification:
 - After `update_stats`: `hedGamesPlayed` = `1`

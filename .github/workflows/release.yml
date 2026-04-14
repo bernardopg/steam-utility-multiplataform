@@ -62,7 +62,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       - name: Restore dependencies
         run: dotnet restore
@@ -88,7 +91,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       - name: Restore dependencies
         run: dotnet restore src/SteamUtility.Cli/SteamUtility.Cli.csproj -r ${{ matrix.runtime }}
@@ -132,8 +138,11 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
-
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+            
       - name: Restore dependencies
         run: dotnet restore src/SteamUtility.Cli/SteamUtility.Cli.csproj -r win-x64
 

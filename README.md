@@ -2,10 +2,12 @@
 
 [![Version](https://img.shields.io/github/v/release/bernardopg/steam-utility-multiplataform?display_name=tag&sort=semver)](https://github.com/bernardopg/steam-utility-multiplataform/releases)
 [![CI](https://github.com/bernardopg/steam-utility-multiplataform/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/bernardopg/steam-utility-multiplataform/actions/workflows/ci.yml)
-[![.NET](https://img.shields.io/badge/.NET-8-512BD4)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-[![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20Windows-1f6feb)](docs/RELEASE.md)
+[![.NET](https://img.shields.io/badge/10-512BD4?logo=dotnet&logoColor=fff)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+[![Steam](https://img.shields.io/badge/Steam-%23000000.svg?logo=steam&logoColor=white)](https://store.steampowered.com/)
+[![Windows](https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white)](docs/RELEASE.md)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)](docs/RELEASE.md)
 
-Cross-platform .NET 8 CLI port of the original [`zevnda/steam-utility`](https://github.com/zevnda/steam-utility), focused on Linux and Windows.
+Cross-platform .NET 8, 9 and 10 CLI port of the original [`zevnda/steam-utility`](https://github.com/zevnda/steam-utility), focused on Linux and Windows.
 
 This project lets you:
 - discover Steam installations, library folders, and installed apps;
@@ -17,7 +19,7 @@ This project lets you:
 
 ## What this project is
 
-`steam-utility-multiplataform` is a multiplatform reimplementation of the upstream `steam-utility` command surface in C#/.NET 8.
+`steam-utility-multiplataform` is a multiplatform reimplementation of the upstream `steam-utility` command surface in C#/.NET 8 or latest.
 
 It combines two main capabilities:
 
@@ -254,8 +256,4 @@ More detail lives in [docs/JSON_OUTPUTS.md](docs/JSON_OUTPUTS.md).
 
 ## Relationship to the upstream project
 
-This repository is based on the original [`zevnda/steam-utility`](https://github.com/zevnda/steam-utility) and aims to preserve the upstream command surface while adding a modern .NET 8 cross-platform architecture for Linux and Windows.
-
-## Current priorities
-
-See [TODO.md](TODO.md) for the live checklist and remaining validation work.
+This repository is based on the original [`zevnda/steam-utility`](https://github.com/zevnda/steam-utility) and aims to preserve the upstream command surface while adding a modern .NET >=8, cross-platform architecture for Linux and Windows.
