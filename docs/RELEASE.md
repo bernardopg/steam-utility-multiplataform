@@ -6,7 +6,7 @@ The repository uses a custom test runner in `tests/SteamUtility.Tests`, so the m
 
 ```bash
 dotnet restore
-dotnet build steam-utility-linux.sln -c Release
+dotnet build steam-utility-multiplataform.sln -c Release
 dotnet run --project tests/SteamUtility.Tests -c Release
 ```
 

@@ -26,7 +26,7 @@ Live validation of the Linux Steam integration, including:
 
 | Command                                                                            | Result                        |
 | ---------------------------------------------------------------------------------- | ----------------------------- |
-| `dotnet build steam-utility-linux.sln`                                             | Passed                        |
+| `dotnet build steam-utility-multiplataform.sln`                                    | Passed                        |
 | `dotnet run --project src/SteamUtility.Cli -- detect`                              | Passed, root detected         |
 | `dotnet run --project src/SteamUtility.Cli -- detect --json`                       | Passed, `found: true`         |
 | `dotnet run --project src/SteamUtility.Cli -- libraries`                           | Passed, 1 library found       |

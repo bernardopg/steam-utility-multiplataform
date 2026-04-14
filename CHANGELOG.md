@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-04-14
+
+### Changed
+- Retargeted the repository to .NET 10 and aligned docs/workflows with the current SDK requirement.
+- Renamed the solution file to `steam-utility-multiplataform.sln` to match the repository's cross-platform scope.
+
 ## [1.0.0] - 2026-04-14
 
 ### Added
 
 #### Core library (`SteamUtility.Core`)
-- Cross-platform .NET 8 solution with `SteamUtility.Core` and `SteamUtility.Cli` projects
+- Cross-platform .NET solution with `SteamUtility.Core` and `SteamUtility.Cli` projects
 - Runtime platform selector that automatically picks Linux or Windows services
 - Linux Steam root discovery (`~/.steam/steam`, `~/.local/share/Steam`)
 - Windows Steam root discovery via registry keys and fallback installation paths
@@ -86,5 +92,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `REPORT_REAL_VALIDATION_TEST_LINUX.md` — Linux validation execution report (AppID 70120)
 - `TODO.md` — execution checklist and tracking board
 
-[Unreleased]: https://github.com/bernardopg/steam-utility-multiplataform/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/bernardopg/steam-utility-multiplataform/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/bernardopg/steam-utility-multiplataform/releases/tag/v1.0.1
 [1.0.0]: https://github.com/bernardopg/steam-utility-multiplataform/releases/tag/v1.0.0

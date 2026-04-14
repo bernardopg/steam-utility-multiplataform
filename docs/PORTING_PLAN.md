@@ -7,7 +7,7 @@ Maintain a single, testable CLI codebase that runs on Linux and Windows, while k
 The original porting effort is complete for Linux + Windows runtime support.
 
 Delivered:
-1. Migration to .NET 8 with shared core + CLI projects.
+1. Initial migration to modern .NET with shared core + CLI projects; the repository now targets .NET 10.
 2. Platform runtime selector for Linux and Windows services.
 3. Steam installation/library discovery and app/compat scanning.
 4. Native Steam client loading for ownership and Steamworks command flows.

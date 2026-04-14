@@ -2,7 +2,7 @@
 
 ## Done
 - [x] Create public repository scaffold
-- [x] Move solution to .NET 8
+- [x] Initial migration to modern .NET (the repository now targets .NET 10)
 - [x] Create `SteamUtility.Core`
 - [x] Create `SteamUtility.Cli`
 - [x] Add Linux Steam root locator
