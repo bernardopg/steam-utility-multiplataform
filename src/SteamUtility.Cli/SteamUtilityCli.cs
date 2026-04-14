@@ -87,27 +87,27 @@ public static class SteamUtilityCli
 
             case "unlock_achievement":
             case "unlock-achievement":
-                PrintToggleSingleAchievement(installation, options, shouldUnlock: true);
+                PrintToggleSingleAchievement(installation, options, overrides, shouldUnlock: true);
                 return;
 
             case "lock_achievement":
             case "lock-achievement":
-                PrintToggleSingleAchievement(installation, options, shouldUnlock: false);
+                PrintToggleSingleAchievement(installation, options, overrides, shouldUnlock: false);
                 return;
 
             case "toggle_achievement":
             case "toggle-achievement":
-                PrintToggleAchievement(installation, options);
+                PrintToggleAchievement(installation, options, overrides);
                 return;
 
             case "unlock_all_achievements":
             case "unlock-all-achievements":
-                PrintToggleAllAchievements(installation, options, shouldUnlock: true);
+                PrintToggleAllAchievements(installation, options, overrides, shouldUnlock: true);
                 return;
 
             case "lock_all_achievements":
             case "lock-all-achievements":
-                PrintToggleAllAchievements(installation, options, shouldUnlock: false);
+                PrintToggleAllAchievements(installation, options, overrides, shouldUnlock: false);
                 return;
 
             case "update_stats":
@@ -759,7 +759,7 @@ public static class SteamUtilityCli
         }
     }
 
-    static void PrintToggleSingleAchievement(SteamInstallation? installation, CliOptions options, bool shouldUnlock)
+    static void PrintToggleSingleAchievement(SteamInstallation? installation, CliOptions options, CliRuntimeOverrides overrides, bool shouldUnlock)
     {
         if (!TryGetSteamworksAppId(installation, options, out var appId) || options.Positionals.Length < 2)
         {
@@ -775,6 +775,19 @@ public static class SteamUtilityCli
 
         try
         {
+            if (overrides.RunSingleAchievementMutation is not null)
+            {
+                var outcome = overrides.RunSingleAchievementMutation(installation!, appId, achievementId, shouldUnlock);
+                if (!outcome.Success)
+                {
+                    WriteLegacyJson(new { error = outcome.Error ?? (shouldUnlock ? "Failed to unlock achievement" : "Failed to lock achievement") });
+                    return;
+                }
+
+                WriteLegacyJson(new { success = shouldUnlock ? "Successfully unlocked achievement" : "Successfully locked achievement" });
+                return;
+            }
+
             using var session = new SteamworksSession(installation!, appId);
             session.EnsureCurrentUserStatsLoaded();
 
@@ -816,7 +829,7 @@ public static class SteamUtilityCli
         }
     }
 
-    static void PrintToggleAchievement(SteamInstallation? installation, CliOptions options)
+    static void PrintToggleAchievement(SteamInstallation? installation, CliOptions options, CliRuntimeOverrides overrides)
     {
         if (!TryGetSteamworksAppId(installation, options, out var appId) || options.Positionals.Length < 2)
         {
@@ -832,6 +845,19 @@ public static class SteamUtilityCli
 
         try
         {
+            if (overrides.RunToggleAchievement is not null)
+            {
+                var outcome = overrides.RunToggleAchievement(installation!, appId, achievementId);
+                if (!outcome.Success)
+                {
+                    WriteLegacyJson(new { error = outcome.Error ?? "Failed to unlock achievement" });
+                    return;
+                }
+
+                WriteLegacyJson(new { success = outcome.SuccessMessage ?? "Successfully unlocked achievement" });
+                return;
+            }
+
             using var session = new SteamworksSession(installation!, appId);
             session.EnsureCurrentUserStatsLoaded();
 
@@ -873,7 +899,7 @@ public static class SteamUtilityCli
         }
     }
 
-    static void PrintToggleAllAchievements(SteamInstallation? installation, CliOptions options, bool shouldUnlock)
+    static void PrintToggleAllAchievements(SteamInstallation? installation, CliOptions options, CliRuntimeOverrides overrides, bool shouldUnlock)
     {
         if (!TryGetSteamworksAppId(installation, options, out var appId))
         {
@@ -882,6 +908,19 @@ public static class SteamUtilityCli
 
         try
         {
+            if (overrides.RunToggleAllAchievements is not null)
+            {
+                var outcome = overrides.RunToggleAllAchievements(installation!, appId, shouldUnlock);
+                if (!outcome.Success)
+                {
+                    WriteLegacyJson(new { error = outcome.Error ?? (shouldUnlock ? "One or more achievements failed to unlock" : "Failed to lock all achievements") });
+                    return;
+                }
+
+                WriteLegacyJson(new { success = outcome.SuccessMessage ?? (shouldUnlock ? "Successfully unlocked all achievements" : "Successfully locked all achievements") });
+                return;
+            }
+
             using var session = new SteamworksSession(installation!, appId);
             session.EnsureCurrentUserStatsLoaded();
 
@@ -1461,12 +1500,23 @@ public static class SteamUtilityCli
         public Action<SteamInstallation, uint, string>? RunIdle { get; init; }
 
         public Func<SteamInstallation, uint, AchievementDataCommandResult>? LoadAchievementData { get; init; }
+
+        public Func<SteamInstallation, uint, string, bool, AchievementMutationCommandResult>? RunSingleAchievementMutation { get; init; }
+
+        public Func<SteamInstallation, uint, string, AchievementMutationCommandResult>? RunToggleAchievement { get; init; }
+
+        public Func<SteamInstallation, uint, bool, AchievementMutationCommandResult>? RunToggleAllAchievements { get; init; }
     }
 
     public sealed record AchievementDataCommandResult(
         ulong SteamId,
         List<AchievementData> Achievements,
         List<StatData> Stats);
+
+    public sealed record AchievementMutationCommandResult(
+        bool Success,
+        string? Error = null,
+        string? SuccessMessage = null);
 
     internal sealed record CliOptions(string? Command, bool Json, bool Diagnostics, int? AppId, string? Match, string[] Positionals)
     {
