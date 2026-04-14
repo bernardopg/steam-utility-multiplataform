@@ -13,3 +13,4 @@ TestResults/
 .env
 steam_appid.txt
 /.hermes
+/.vscode

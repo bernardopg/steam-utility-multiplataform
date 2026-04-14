@@ -63,11 +63,11 @@
 - [x] Execute Linux integration validation for the native Steam paths (`steamclient.so`, `libsteam_api.so`) with a real running Steam session, because automated tests still do not prove the Steamworks command path end-to-end
 - [ ] Add Windows-specific automated or documented manual validation for `WindowsSteamLocator`, `WindowsSteamClientLibraryLoader`, and `WindowsSteamApiLibraryResolver`, which currently have no dedicated tests
 - [ ] Add coverage collection/reporting (for example Coverlet + CI artifact/public summary); today the repo has passing tests via `dotnet run --project tests/SteamUtility.Tests`, but no actual coverage report
-- [ ] Add regression tests for the remaining high-risk native services (`SteamworksSession`, `SteamOwnershipService`, `SteamApiNative`, `StatsSchemaLoader`) after the new CLI extraction coverage
+- [x] Add regression tests for the remaining high-risk native services (`SteamworksSession`, `SteamOwnershipService`, `SteamApiNative`, `StatsSchemaLoader`) after the new CLI extraction coverage
 
 ## Later
 - [ ] Consider Tauri or other GUI only after core parity is clearer
 
 ## Notes
 - The upstream command surface from `zevnda/steam-utility` is present in this repository (`check_ownership`, `idle`, `get_achievement_data`, `unlock_achievement`, `lock_achievement`, `toggle_achievement`, `unlock_all_achievements`, `lock_all_achievements`, `update_stats`, `reset_all_stats`).
-- The main gap is no longer missing commands; it is missing proof that Linux/Windows native Steamworks behavior matches the upstream project in real environments and under automated regression coverage.
+- The main gap is no longer missing commands; it is Windows-specific validation and a formal coverage report for the native and CLI regression suites.

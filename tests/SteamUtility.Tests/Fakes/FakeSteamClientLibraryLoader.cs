@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using SteamUtility.Core.Abstractions;
@@ -9,6 +10,16 @@ namespace SteamUtility.Tests.Fakes;
 
 internal sealed class FakeSteamClientLibraryLoader : ISteamClientLibraryLoader, IDisposable
 {
+    private static readonly Type CreateSteamPipeNativeType = typeof(SteamClient018).GetNestedType("CreateSteamPipeNative", BindingFlags.NonPublic)!;
+    private static readonly Type ReleaseSteamPipeNativeType = typeof(SteamClient018).GetNestedType("ReleaseSteamPipeNative", BindingFlags.NonPublic)!;
+    private static readonly Type ConnectToGlobalUserNativeType = typeof(SteamClient018).GetNestedType("ConnectToGlobalUserNative", BindingFlags.NonPublic)!;
+    private static readonly Type ReleaseUserNativeType = typeof(SteamClient018).GetNestedType("ReleaseUserNative", BindingFlags.NonPublic)!;
+    private static readonly Type GetISteamUtilsNativeType = typeof(SteamClient018).GetNestedType("GetISteamUtilsNative", BindingFlags.NonPublic)!;
+    private static readonly Type GetISteamAppsNativeType = typeof(SteamClient018).GetNestedType("GetISteamAppsNative", BindingFlags.NonPublic)!;
+    private static readonly Type GetAppIdNativeType = typeof(SteamUtils005).GetNestedType("GetAppIdNative", BindingFlags.NonPublic)!;
+    private static readonly Type IsSubscribedAppNativeType = typeof(SteamApps008).GetNestedType("IsSubscribedAppNative", BindingFlags.NonPublic)!;
+    private static readonly Type NativeGetAppDataType = typeof(SteamApps001).GetNestedType("NativeGetAppData", BindingFlags.NonPublic)!;
+
     private readonly HashSet<uint> _ownedAppIds;
     private readonly IReadOnlyDictionary<uint, string?> _appNames;
     private readonly List<Delegate> _delegates = [];
@@ -98,12 +109,12 @@ internal sealed class FakeSteamClientLibraryLoader : ISteamClientLibraryLoader, 
     {
         return new ISteamClient018
         {
-            CreateSteamPipe = FunctionPointer(new CreateSteamPipeDelegate(CreateSteamPipe)),
-            ReleaseSteamPipe = FunctionPointer(new ReleaseSteamPipeDelegate(ReleaseSteamPipe)),
-            ConnectToGlobalUser = FunctionPointer(new ConnectToGlobalUserDelegate(ConnectToGlobalUser)),
-            ReleaseUser = FunctionPointer(new ReleaseUserDelegate(ReleaseUser)),
-            GetISteamUtils = FunctionPointer(new GetISteamUtilsDelegate(GetISteamUtils)),
-            GetISteamApps = FunctionPointer(new GetISteamAppsDelegate(GetISteamApps))
+            CreateSteamPipe = FunctionPointer(CreateSteamPipeNativeType, nameof(CreateSteamPipe)),
+            ReleaseSteamPipe = FunctionPointer(ReleaseSteamPipeNativeType, nameof(ReleaseSteamPipe)),
+            ConnectToGlobalUser = FunctionPointer(ConnectToGlobalUserNativeType, nameof(ConnectToGlobalUser)),
+            ReleaseUser = FunctionPointer(ReleaseUserNativeType, nameof(ReleaseUser)),
+            GetISteamUtils = FunctionPointer(GetISteamUtilsNativeType, nameof(GetISteamUtils)),
+            GetISteamApps = FunctionPointer(GetISteamAppsNativeType, nameof(GetISteamApps))
         };
     }
 
@@ -111,7 +122,7 @@ internal sealed class FakeSteamClientLibraryLoader : ISteamClientLibraryLoader, 
     {
         return new ISteamUtils005
         {
-            GetAppID = FunctionPointer(new GetAppIdDelegate(GetAppId))
+            GetAppID = FunctionPointer(GetAppIdNativeType, nameof(GetAppId))
         };
     }
 
@@ -119,7 +130,7 @@ internal sealed class FakeSteamClientLibraryLoader : ISteamClientLibraryLoader, 
     {
         return new ISteamApps008
         {
-            IsSubscribedApp = FunctionPointer(new IsSubscribedAppDelegate(IsSubscribedApp))
+            IsSubscribedApp = FunctionPointer(IsSubscribedAppNativeType, nameof(IsSubscribedApp))
         };
     }
 
@@ -127,12 +138,16 @@ internal sealed class FakeSteamClientLibraryLoader : ISteamClientLibraryLoader, 
     {
         return new ISteamApps001
         {
-            GetAppData = FunctionPointer(new GetAppDataDelegate(GetAppData))
+            GetAppData = FunctionPointer(NativeGetAppDataType, nameof(GetAppData))
         };
     }
 
-    private IntPtr FunctionPointer(Delegate @delegate)
+    private IntPtr FunctionPointer(Type delegateType, string methodName)
     {
+        var method = GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new MissingMethodException(GetType().Name, methodName);
+
+        var @delegate = Delegate.CreateDelegate(delegateType, this, method, throwOnBindFailure: true)!;
         _delegates.Add(@delegate);
         return Marshal.GetFunctionPointerForDelegate(@delegate);
     }
