@@ -29,13 +29,15 @@ jobs:
         run: dotnet restore
 
       - name: Check for vulnerable dependencies
+        shell: bash
         run: |
           echo "## 🔍 Dependency Vulnerability Check" >> "$GITHUB_STEP_SUMMARY"
-          if dotnet list package --vulnerable --include-transitive | grep -q "has"; then
+          vulnerability_output="$(dotnet list package --vulnerable --include-transitive || true)"
+          if echo "$vulnerability_output" | grep -qE '^[[:space:]]*>[[:space:]]'; then
             echo >> "$GITHUB_STEP_SUMMARY"
             echo "⚠️ **Vulnerable dependencies found:**" >> "$GITHUB_STEP_SUMMARY"
             echo >> "$GITHUB_STEP_SUMMARY"
-            dotnet list package --vulnerable --include-transitive >> "$GITHUB_STEP_SUMMARY"
+            echo "$vulnerability_output" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           else
             echo >> "$GITHUB_STEP_SUMMARY"
