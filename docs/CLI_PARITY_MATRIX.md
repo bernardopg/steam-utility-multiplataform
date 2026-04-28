@@ -42,9 +42,9 @@ Legend:
 | Linux runtime selection | Implemented | `SteamPlatformRuntimeTests` | real Linux session validation exists; preserve coverage as platform code evolves |
 | Linux `steamclient.so` resolution | Implemented | `LinuxSteamClientLibraryTests` | unit-tested and validated in a live Linux Steam session; no equivalent Windows proof yet |
 | Linux `libsteam_api.so` resolution | Implemented | `LinuxSteamApiLibraryResolverTests` | unit-tested and validated in a live Linux Steam session; no equivalent Windows proof yet |
-| Windows runtime selection | Implemented | indirect only through `SteamPlatformRuntimeTests` on Windows hosts | add dedicated Windows validation |
-| Windows Steam locator | Implemented | none dedicated | add deterministic tests or documented manual validation |
-| Windows client/API loaders | Implemented | none dedicated | add deterministic tests or documented manual validation |
+| Windows runtime selection | Implemented | indirect only through `SteamPlatformRuntimeTests` on Windows hosts; manual checklist exists in `docs/WINDOWS_REAL_STEAM_VALIDATION.md` | execute checklist on a Windows host |
+| Windows Steam locator | Implemented | documented manual validation in `docs/WINDOWS_REAL_STEAM_VALIDATION.md` | execute checklist on a Windows host |
+| Windows client/API loaders | Implemented | documented manual validation in `docs/WINDOWS_REAL_STEAM_VALIDATION.md` | execute checklist on a Windows host |
 
 ## Current conclusion
 
