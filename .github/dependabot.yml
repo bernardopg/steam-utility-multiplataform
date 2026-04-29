@@ -1,0 +1,48 @@
+version: 2
+
+updates:
+  # .NET projects under src/ and tests/. NuGet is the only ecosystem here —
+  # the solution targets net10.0 and pulls in steamworks bindings via NuGet.
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "dotnet"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      # Group test/coverage tooling so release-affecting bumps stay separate.
+      test-tooling:
+        patterns:
+          - "coverlet*"
+          - "Microsoft.NET.Test.Sdk"
+          - "xunit*"
+          - "NSubstitute*"
+          - "FluentAssertions*"
+      microsoft-extensions:
+        patterns:
+          - "Microsoft.Extensions.*"
+
+  # GitHub Actions used by the submodule's CI/release workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    groups:
+      actions-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
