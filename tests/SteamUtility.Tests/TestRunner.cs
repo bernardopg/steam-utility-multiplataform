@@ -58,6 +58,10 @@ public static class TestRunner
             Cli.StatsMutationCliTests.Run_ResetAllStats_ResetFailure_ReturnsError,
             Cli.StatsMutationCliTests.Run_ResetAllStats_ValidationFailure_ReturnsError,
             Cli.StatsMutationCliTests.Run_ResetAllStats_WhenSteamworksInitFails_ReturnsFailureReason,
+            Cli.StdoutJsonContractTests.CheckOwnership_JsonMode_EmitsOnlyJsonOnStdout,
+            Cli.StdoutJsonContractTests.Idle_SingleGame_EmitsOnlyJsonOnStdout,
+            Cli.StdoutJsonContractTests.GetAchievementData_EmitsOnlyJsonOnStdout,
+            Cli.StdoutJsonContractTests.MutationCommands_EmitOnlyJsonOnStdout,
             Services.NativeServiceRegressionTests.SteamworksSession_ThrowsWhenSteamNotRunning,
             Services.NativeServiceRegressionTests.SteamworksSession_SucceedsWithValidFake,
             Services.NativeServiceRegressionTests.SteamOwnershipService_ReturnsEmptyList_WhenNoOwnedApps,
@@ -82,20 +86,26 @@ public static class TestRunner
             LinuxSteamApiLibraryResolverTests.FindLibraryPath_UsesEnvironmentOverrideWhenPresent
         };
 
+        var passed = 0;
+        var failed = 0;
+
         foreach (var test in tests)
         {
             try
             {
                 test();
+                passed++;
                 Console.WriteLine($"PASS {test.Method.DeclaringType?.Name}.{test.Method.Name}");
             }
             catch (Exception ex)
             {
+                failed++;
                 Console.Error.WriteLine($"FAIL {test.Method.DeclaringType?.Name}.{test.Method.Name}: {ex.Message}");
-                return 1;
             }
         }
 
-        return 0;
+        Console.WriteLine($"SUMMARY passed={passed} failed={failed} total={tests.Length}");
+
+        return failed == 0 ? 0 : 1;
     }
 }

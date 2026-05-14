@@ -66,7 +66,7 @@
 - [x] Add deterministic coverage for `check_ownership` when no AppID payload is provided, including the default remote source path (`DEFAULT_GAMES_URL`) and failure handling for fetch/parse errors
 - [x] Add coverage collection/reporting (for example Coverlet + CI artifact/public summary); this is now implemented, and the repository's direct validation path remains `dotnet run --project tests/SteamUtility.Tests`
 - [x] Add regression tests for the remaining high-risk native services (`SteamworksSession`, `SteamOwnershipService`, `SteamApiNative`, `StatsSchemaLoader`) after the new CLI extraction coverage
-- [ ] Harden the release workflow / test harness around the custom test runner
+- [x] Harden the release workflow / test harness around the custom test runner. (`TestRunner` now runs all tests and prints pass/fail totals; SGI stdout JSON contract tests added)
 
 ## Features
 - [x] Multi-game idle: `idle <app_id1> [app_id2 ...]` spawns one child process per AppID (Steamworks allows only one AppID per process); each child emits its own init-result JSON line; parent relays them and waits until Ctrl+C or all children exit; single-game path unchanged
