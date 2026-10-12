@@ -117,7 +117,7 @@ jobs:
           zip -r ../../SteamUtility-${{ matrix.runtime }}.zip .
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: SteamUtility-${{ matrix.runtime }}
           path: SteamUtility-${{ matrix.runtime }}.zip
@@ -164,7 +164,7 @@ jobs:
         run: Compress-Archive -Path artifacts\win-x64\* -DestinationPath SteamUtility-win-x64.zip
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: SteamUtility-win-x64
           path: SteamUtility-win-x64.zip
@@ -182,7 +182,7 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Download artifacts
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           path: release-assets
 
