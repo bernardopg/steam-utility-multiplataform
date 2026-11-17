@@ -62,9 +62,9 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v6
+        uses: actions/setup-dotnet@v6.1.0
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
 
       - name: Restore dependencies
         run: dotnet restore
@@ -88,9 +88,9 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v6
+        uses: actions/setup-dotnet@v6.1.0
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
 
       - name: Restore dependencies
         run: dotnet restore src/SteamUtility.Cli/SteamUtility.Cli.csproj -r ${{ matrix.runtime }}
@@ -108,7 +108,7 @@ jobs:
       - name: Create checksums
         run: |
           cd artifacts/${{ matrix.runtime }}
-          find . -type f -exec sha256sum {} \; > CHECKSUMS.sha256
+          find . -type f ! -name CHECKSUMS.sha256 -exec sha256sum {} \; > CHECKSUMS.sha256
           cd ../..
 
       - name: Pack release archive
@@ -117,7 +117,7 @@ jobs:
           zip -r ../../SteamUtility-${{ matrix.runtime }}.zip .
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: SteamUtility-${{ matrix.runtime }}
           path: SteamUtility-${{ matrix.runtime }}.zip
@@ -132,9 +132,9 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v6
+        uses: actions/setup-dotnet@v6.1.0
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
             
       - name: Restore dependencies
         run: dotnet restore src/SteamUtility.Cli/SteamUtility.Cli.csproj -r win-x64
@@ -164,7 +164,7 @@ jobs:
         run: Compress-Archive -Path artifacts\win-x64\* -DestinationPath SteamUtility-win-x64.zip
 
       - name: Upload release artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: SteamUtility-win-x64
           path: SteamUtility-win-x64.zip
@@ -182,7 +182,7 @@ jobs:
         uses: actions/checkout@v7.0.1
 
       - name: Download artifacts
-        uses: actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@v8.0.2
         with:
           path: release-assets
 
@@ -205,7 +205,7 @@ jobs:
           cat release_notes.md
 
       - name: Publish GitHub release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v3.0.4
         with:
           files: |
             release-assets/SteamUtility-linux-x64/SteamUtility-linux-x64.zip
