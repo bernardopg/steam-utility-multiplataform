@@ -16,7 +16,7 @@ The automated test suite proves deterministic CLI behavior, but it does not prov
 Required:
 - Windows 10 or Windows 11 x64
 - Steam installed and logged in
-- `.NET 10 SDK`
+- `.NET 11 SDK`
 - this repository checked out locally
 - at least one known game/app that exposes Steam user stats or achievements
 - PowerShell

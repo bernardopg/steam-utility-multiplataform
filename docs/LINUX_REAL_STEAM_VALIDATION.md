@@ -13,7 +13,7 @@ This document is the manual validation gate for that last-mile proof.
 Required:
 - Linux machine with Steam installed
 - User account logged into Steam
-- `.NET 10 SDK`
+- `.NET 11 SDK`
 - this repository checked out locally
 - at least one known game/app that exposes Steam user stats or achievements
 

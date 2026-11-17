@@ -1,8 +1,7 @@
 version: 2
 
 updates:
-  # .NET projects under src/ and tests/. NuGet is the only ecosystem here —
-  # the solution targets net10.0 and pulls in steamworks bindings via NuGet.
+  # Monitor NuGet dependencies declared by projects under src/ and tests/.
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
@@ -28,7 +27,7 @@ updates:
         patterns:
           - "Microsoft.Extensions.*"
 
-  # GitHub Actions used by the submodule's CI/release workflows.
+  # GitHub Actions used by the CI and release workflows.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

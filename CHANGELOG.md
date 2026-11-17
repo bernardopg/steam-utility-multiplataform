@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-17
+
+### Changed
+- Target .NET 11 and update GitHub Actions, including the Dependabot artifact action updates.
+
+### Fixed
+- Avoid coverage comment permission failures for Dependabot and fork pull requests.
+- Exclude the checksum file itself from Linux release checksums.
+
 ## [1.0.2] - 2026-04-29
 
 ### Added
@@ -106,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `REPORT_REAL_VALIDATION_TEST_LINUX.md` — Linux validation execution report (AppID 70120)
 - `TODO.md` — execution checklist and tracking board
 
-[Unreleased]: https://github.com/bernardopg/steam-utility-multiplataform/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/bernardopg/steam-utility-multiplataform/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/bernardopg/steam-utility-multiplataform/releases/tag/v1.1.0
 [1.0.2]: https://github.com/bernardopg/steam-utility-multiplataform/releases/tag/v1.0.2
 [1.0.1]: https://github.com/bernardopg/steam-utility-multiplataform/releases/tag/v1.0.1
 [1.0.0]: https://github.com/bernardopg/steam-utility-multiplataform/releases/tag/v1.0.0
